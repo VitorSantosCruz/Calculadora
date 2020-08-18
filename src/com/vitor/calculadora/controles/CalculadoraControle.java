@@ -1,6 +1,7 @@
 package com.vitor.calculadora.controles;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -8,6 +9,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
@@ -18,6 +20,7 @@ public class CalculadoraControle {
 	private String operacaoPendente = "";
 	private boolean terminouComIgual = false;
 	private boolean reiniciarValorAtual = false;
+	private ArrayList<String> historico = new ArrayList<>();
 	private Stage stage = new Stage();
 
 	@FXML
@@ -97,6 +100,7 @@ public class CalculadoraControle {
 
 			stage.setTitle("Calculadora");
 			stage.resizableProperty().setValue(false);
+			stage.getIcons().add(new Image("icone.png"));
 			stage.setScene(scene);
 			stage.show();
 		} catch (IOException e) {
@@ -491,6 +495,7 @@ public class CalculadoraControle {
 			this.labelCalculo.setText(valorAtual + " =");
 		}
 
+		this.historico.add(this.labelCalculo.getText().trim() + " " + this.labelResultado.getText().trim());
 		this.mudarTamanhoLetra();
 		this.terminouComIgual = true;
 	}
@@ -530,12 +535,11 @@ public class CalculadoraControle {
 
 	@FXML
 	void mostrarHistorico(ActionEvent event) {
-		new HistoricoControle(this.labelCalculo.getText());
+		new HistoricoControle(historico);
 	}
 
 	@FXML
 	void pressionarTeclado(KeyEvent event) {
-		System.out.println(event.getCode());
 		switch (event.getCode()) {
 		case NUMPAD0, DIGIT0:
 			this.clicarEm0(null);
