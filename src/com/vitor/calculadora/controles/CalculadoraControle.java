@@ -143,11 +143,18 @@ public class CalculadoraControle {
 	}
 
 	private void atualizarLabelCalculo() {
+		String labelResultado = this.labelResultado.getText().trim();
+		int indiceVirgula = labelResultado.indexOf(",");
+
+		if (indiceVirgula == labelResultado.length() - 1) {
+			labelResultado = labelResultado.substring(0, indiceVirgula);
+		}
+
 		if (this.labelCalculo.getText().trim().isEmpty()) {
-			this.labelCalculo.setText(this.labelResultado.getText().trim() + " " + this.operacaoPendente);
+			this.labelCalculo.setText(labelResultado + " " + this.operacaoPendente);
 		} else {
-			this.labelCalculo.setText(this.labelCalculo.getText().trim() + " " + this.labelResultado.getText().trim()
-					+ " " + this.operacaoPendente);
+			this.labelCalculo
+					.setText(this.labelCalculo.getText().trim() + " " + labelResultado + " " + this.operacaoPendente);
 		}
 	}
 
@@ -250,14 +257,17 @@ public class CalculadoraControle {
 	void clicarEmApagar(ActionEvent event) {
 		String valor = this.labelResultado.getText().trim();
 
-		if (valor != "0" || this.reiniciarValorAtual || this.terminouComIgual) {
-			if (valor.length() == 1) {
+		if (terminouComIgual) {
+			this.labelCalculo.setText("");
+		} else if (valor != "0" || this.reiniciarValorAtual || this.terminouComIgual) {
+			if (valor.length() == 1 || (valor.length() == 2 && valor.indexOf("-") > -1)) {
 				this.labelResultado.setText("0");
 			} else {
 				this.labelResultado.setText(valor.substring(0, valor.length() - 1));
 			}
 
-			this.valorAtual = Double.valueOf(this.labelResultado.getText().trim());
+			this.reiniciarValorAtual = false;
+			this.valorAtual = Double.valueOf(this.labelResultado.getText().replace(',', '.').trim());
 			this.mudarTamanhoLetra();
 		}
 	}
@@ -325,6 +335,8 @@ public class CalculadoraControle {
 
 			this.mudarTamanhoLetra();
 		}
+
+		this.valorAtual = this.resultado;
 	}
 
 	@FXML
@@ -362,6 +374,8 @@ public class CalculadoraControle {
 
 			this.mudarTamanhoLetra();
 		}
+
+		this.valorAtual = this.resultado;
 	}
 
 	@FXML
@@ -399,6 +413,8 @@ public class CalculadoraControle {
 
 			this.mudarTamanhoLetra();
 		}
+
+		this.valorAtual = this.resultado;
 	}
 
 	@FXML
@@ -438,6 +454,7 @@ public class CalculadoraControle {
 			this.mudarTamanhoLetra();
 		}
 
+		this.valorAtual = this.resultado;
 	}
 
 	@FXML
@@ -462,7 +479,12 @@ public class CalculadoraControle {
 
 			this.labelResultado.setText("" + valor);
 
-			this.labelCalculo.setText(resultado + " " + this.operacaoPendente + " " + valorAtual + " =");
+			if (!terminouComIgual) {
+				String labelCalculo = this.labelCalculo.getText().trim();
+				this.labelCalculo.setText(labelCalculo.substring(0, labelCalculo.length() - 1) + " =");
+			} else {
+				this.labelCalculo.setText(resultado + " " + this.operacaoPendente + " " + valorAtual + " =");
+			}
 		} else {
 			this.resultado = this.valorAtual;
 
@@ -574,6 +596,9 @@ public class CalculadoraControle {
 			break;
 		case ESCAPE:
 			this.clicarEmC(null);
+			break;
+		case H:
+			this.mostrarHistorico(null);
 			break;
 		default:
 		}

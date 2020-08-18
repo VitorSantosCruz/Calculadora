@@ -24,11 +24,12 @@ public class HistoricoControle {
 			stage.setTitle("Histórico");
 			stage.resizableProperty().setValue(false);
 			stage.setScene(scene);
-			stage.initModality(Modality.APPLICATION_MODAL);
-			stage.showAndWait();
 
 			System.out.println(historico);
 			textAreaHistorico.setText(historico);
+
+			stage.initModality(Modality.APPLICATION_MODAL);
+			stage.showAndWait();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
