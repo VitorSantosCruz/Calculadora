@@ -1,11 +1,16 @@
 package com.vitor.calculadora.controles;
 
+import java.io.IOException;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.text.Font;
+import javafx.stage.Stage;
 
 public class CalculadoraControle {
 	private double resultado = 0.0;
@@ -13,6 +18,7 @@ public class CalculadoraControle {
 	private String operacaoPendente = "";
 	private boolean terminouComIgual = false;
 	private boolean reiniciarValorAtual = false;
+	private Stage stage = new Stage();
 
 	@FXML
 	private Button botaoMudaSinal;
@@ -79,6 +85,116 @@ public class CalculadoraControle {
 
 	@FXML
 	private Label labelCalculo;
+
+	@FXML
+	private Button botaoHistoricoCalculo;
+
+	public CalculadoraControle() {
+		try {
+			FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("../modelos/CalculadoraModelo.fxml"));
+			fxmlLoader.setController(this);
+			Scene scene = new Scene(fxmlLoader.load());
+
+			stage.setTitle("Calculadora");
+			stage.resizableProperty().setValue(false);
+			stage.setScene(scene);
+			stage.show();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void mudarTamanhoLetra() {
+		int tamanho;
+
+		if (this.labelResultado.getText().trim().length() >= 10 && this.labelResultado.getText().trim().length() < 15) {
+			tamanho = 35;
+		} else if (this.labelResultado.getText().trim().length() >= 15
+				&& this.labelResultado.getText().trim().length() < 20) {
+			tamanho = 30;
+		} else if (this.labelResultado.getText().trim().length() >= 20) {
+			tamanho = 25;
+		} else {
+			tamanho = 40;
+		}
+
+		this.labelResultado.setFont(new Font("Arial Bold", tamanho));
+	}
+
+	private String formataNumero(double numero) {
+		String numeroFormatado = String.valueOf(numero);
+
+		if (this.temDecimais(numero)) {
+			numeroFormatado = numeroFormatado.replace(".", ",");
+		} else {
+			String valor = numeroFormatado;
+			valor = valor.substring(0, valor.indexOf("."));
+			numeroFormatado = valor;
+		}
+
+		return numeroFormatado;
+	}
+
+	private boolean temDecimais(double numero) {
+		String valor = String.valueOf(numero);
+		valor = valor.substring(valor.indexOf(".") + 1);
+
+		return !valor.equals("0");
+	}
+
+	private void atualizarLabelCalculo() {
+		if (this.labelCalculo.getText().trim().isEmpty()) {
+			this.labelCalculo.setText(this.labelResultado.getText().trim() + " " + this.operacaoPendente);
+		} else {
+			this.labelCalculo.setText(this.labelCalculo.getText().trim() + " " + this.labelResultado.getText().trim()
+					+ " " + this.operacaoPendente);
+		}
+	}
+
+	private void adicionarNumero(String numero) {
+		String valor = this.labelResultado.getText().trim();
+
+		if (this.terminouComIgual) {
+			clicarEmC(null);
+			valor = "0";
+		}
+
+		if (valor.length() <= 21 || this.reiniciarValorAtual) {
+			if (valor.equals("0") || this.reiniciarValorAtual) {
+				this.reiniciarValorAtual = false;
+				this.labelResultado.setText(numero);
+			} else {
+				this.labelResultado.setText(valor + numero);
+			}
+
+			valor = this.labelResultado.getText().trim();
+			valor = valor.replace(".", "");
+
+			try {
+				this.valorAtual = Double.valueOf(valor.replace(',', '.'));
+			} catch (Exception e) {
+				clicarEmC(null);
+				this.labelResultado.setText("NAN");
+			}
+
+			this.mudarTamanhoLetra();
+		}
+	}
+
+	private double calculadora(String operacao) {
+		return switch (operacao) {
+		case "+":
+			yield this.resultado + this.valorAtual;
+		case "-":
+			yield this.resultado - this.valorAtual;
+		case "*":
+			yield this.resultado * this.valorAtual;
+		case "/":
+			yield this.resultado / this.valorAtual;
+		default:
+			throw new IllegalArgumentException("Operação inesperada " + operacao);
+		};
+	}
 
 	@FXML
 	void clicarEm0(ActionEvent event) {
@@ -391,7 +507,13 @@ public class CalculadoraControle {
 	}
 
 	@FXML
+	void mostrarHistorico(ActionEvent event) {
+		new HistoricoControle(this.labelCalculo.getText());
+	}
+
+	@FXML
 	void pressionarTeclado(KeyEvent event) {
+		System.out.println(event.getCode());
 		switch (event.getCode()) {
 		case NUMPAD0, DIGIT0:
 			this.clicarEm0(null);
@@ -455,97 +577,5 @@ public class CalculadoraControle {
 			break;
 		default:
 		}
-	}
-
-	private void mudarTamanhoLetra() {
-		int tamanho;
-
-		if (this.labelResultado.getText().trim().length() >= 10 && this.labelResultado.getText().trim().length() < 15) {
-			tamanho = 35;
-		} else if (this.labelResultado.getText().trim().length() >= 15
-				&& this.labelResultado.getText().trim().length() < 20) {
-			tamanho = 30;
-		} else if (this.labelResultado.getText().trim().length() >= 20) {
-			tamanho = 25;
-		} else {
-			tamanho = 40;
-		}
-
-		this.labelResultado.setFont(new Font("Arial Bold", tamanho));
-	}
-
-	private String formataNumero(double numero) {
-		String numeroFormatado = String.valueOf(numero);
-
-		if (this.temDecimais(numero)) {
-			numeroFormatado = numeroFormatado.replace(".", ",");
-		} else {
-			String valor = numeroFormatado;
-			valor = valor.substring(0, valor.indexOf("."));
-			numeroFormatado = valor;
-		}
-
-		return numeroFormatado;
-	}
-
-	private boolean temDecimais(double numero) {
-		String valor = String.valueOf(numero);
-		valor = valor.substring(valor.indexOf(".") + 1);
-
-		return !valor.equals("0");
-	}
-
-	private void atualizarLabelCalculo() {
-		if (this.labelCalculo.getText().trim().isEmpty()) {
-			this.labelCalculo.setText(this.labelResultado.getText().trim() + " " + this.operacaoPendente);
-		} else {
-			this.labelCalculo.setText(this.labelCalculo.getText().trim() + " " + this.labelResultado.getText().trim()
-					+ " " + this.operacaoPendente);
-		}
-	}
-
-	private void adicionarNumero(String numero) {
-		String valor = this.labelResultado.getText().trim();
-
-		if (this.terminouComIgual) {
-			clicarEmC(null);
-			valor = "0";
-		}
-
-		if (valor.length() <= 21 || this.reiniciarValorAtual) {
-			if (valor.equals("0") || this.reiniciarValorAtual) {
-				this.reiniciarValorAtual = false;
-				this.labelResultado.setText(numero);
-			} else {
-				this.labelResultado.setText(valor + numero);
-			}
-
-			valor = this.labelResultado.getText().trim();
-			valor = valor.replace(".", "");
-
-			try {
-				this.valorAtual = Double.valueOf(valor.replace(',', '.'));
-			} catch (Exception e) {
-				clicarEmC(null);
-				this.labelResultado.setText("NAN");
-			}
-
-			this.mudarTamanhoLetra();
-		}
-	}
-
-	private double calculadora(String operacao) {
-		return switch (operacao) {
-		case "+":
-			yield this.resultado + this.valorAtual;
-		case "-":
-			yield this.resultado - this.valorAtual;
-		case "*":
-			yield this.resultado * this.valorAtual;
-		case "/":
-			yield this.resultado / this.valorAtual;
-		default:
-			throw new IllegalArgumentException("Operação inesperada " + operacao);
-		};
 	}
 }

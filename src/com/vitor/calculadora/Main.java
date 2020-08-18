@@ -1,26 +1,14 @@
 package com.vitor.calculadora;
 
-import java.io.IOException;
+import com.vitor.calculadora.controles.CalculadoraControle;
 
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 public class Main extends Application {
 	@Override
 	public void start(Stage stage) {
-		try {
-			Parent parent = FXMLLoader.load(getClass().getResource("modelos/CalculadoraModelo.fxml"));
-
-			Scene scene = new Scene(parent);
-
-			stage.setScene(scene);
-			stage.show();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		new CalculadoraControle();
 	}
 
 	public static void main(String[] args) {

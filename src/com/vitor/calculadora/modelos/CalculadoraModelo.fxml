@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.vitor.calculadora.controles.CalculadoraControle">
+<AnchorPane onInputMethodTextChanged="#pressionarTeclado" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <Pane prefHeight="500.0" prefWidth="330.0" style="-fx-background-color: #606060;">
          <children>
@@ -29,7 +29,7 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <Button fx:id="botaoMudaSinal" mnemonicParsing="false" onAction="#clicarEmMudaSinal" onKeyPressed="#pressionarTeclado" prefHeight="50.0" prefWidth="85.0" style="-fx-background-color: #232323;" text="+/-" textAlignment="JUSTIFY" textFill="WHITE" GridPane.rowIndex="4">
+                  <Button fx:id="botaoMudaSinal" mnemonicParsing="false" onAction="#clicarEmMudaSinal" prefHeight="50.0" prefWidth="85.0" style="-fx-background-color: #232323;" text="+/-" textAlignment="JUSTIFY" textFill="WHITE" GridPane.rowIndex="4">
                      <font>
                         <Font name="Arial Bold" size="20.0" />
                      </font>
@@ -37,7 +37,7 @@
                         <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                      </GridPane.margin>
                   </Button>
-                  <Button fx:id="botao0" mnemonicParsing="false" onAction="#clicarEm0" onKeyPressed="#pressionarTeclado" prefHeight="50.0" prefWidth="85.0" style="-fx-background-color: #232323;" text="0" textAlignment="JUSTIFY" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                  <Button fx:id="botao0" mnemonicParsing="false" onAction="#clicarEm0" prefHeight="50.0" prefWidth="85.0" style="-fx-background-color: #232323;" text="0" textAlignment="JUSTIFY" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4">
                      <font>
                         <Font name="Arial Bold" size="20.0" />
                      </font>
@@ -45,7 +45,7 @@
                         <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                      </GridPane.margin>
                   </Button>
-                  <Button fx:id="botaoVirgula" mnemonicParsing="false" onAction="#clicarEmVirgula" onKeyPressed="#pressionarTeclado" prefHeight="50.0" prefWidth="85.0" style="-fx-background-color: #232323;" text="," textAlignment="JUSTIFY" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="4">
+                  <Button fx:id="botaoVirgula" mnemonicParsing="false" onAction="#clicarEmVirgula" prefHeight="50.0" prefWidth="85.0" style="-fx-background-color: #232323;" text="," textAlignment="JUSTIFY" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="4">
                      <font>
                         <Font name="Arial Bold" size="20.0" />
                      </font>
@@ -53,7 +53,7 @@
                         <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                      </GridPane.margin>
                   </Button>
-                  <Button fx:id="botaoIgual" mnemonicParsing="false" onAction="#clicarEmIgual" onKeyPressed="#pressionarTeclado" prefHeight="50.0" prefWidth="85.0" style="-fx-background-color: #008080;" text="=" textAlignment="JUSTIFY" textFill="WHITE" GridPane.columnIndex="3" GridPane.rowIndex="4">
+                  <Button fx:id="botaoIgual" mnemonicParsing="false" onAction="#clicarEmIgual" prefHeight="50.0" prefWidth="85.0" style="-fx-background-color: #008080;" text="=" textAlignment="JUSTIFY" textFill="WHITE" GridPane.columnIndex="3" GridPane.rowIndex="4">
                      <font>
                         <Font name="Arial Bold" size="20.0" />
                      </font>
@@ -61,7 +61,7 @@
                         <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                      </GridPane.margin>
                   </Button>
-                  <Button fx:id="botao1" mnemonicParsing="false" onAction="#clicarEm1" onKeyPressed="#pressionarTeclado" prefHeight="50.0" prefWidth="85.0" style="-fx-background-color: #232323;" text="1" textAlignment="JUSTIFY" textFill="WHITE" GridPane.rowIndex="3">
+                  <Button fx:id="botao1" mnemonicParsing="false" onAction="#clicarEm1" prefHeight="50.0" prefWidth="85.0" style="-fx-background-color: #232323;" text="1" textAlignment="JUSTIFY" textFill="WHITE" GridPane.rowIndex="3">
                      <font>
                         <Font name="Arial Bold" size="20.0" />
                      </font>
@@ -69,7 +69,7 @@
                         <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                      </GridPane.margin>
                   </Button>
-                  <Button fx:id="botao2" mnemonicParsing="false" onAction="#clicarEm2" onKeyPressed="#pressionarTeclado" prefHeight="50.0" prefWidth="85.0" style="-fx-background-color: #232323;" text="2" textAlignment="JUSTIFY" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                  <Button fx:id="botao2" mnemonicParsing="false" onAction="#clicarEm2" prefHeight="50.0" prefWidth="85.0" style="-fx-background-color: #232323;" text="2" textAlignment="JUSTIFY" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
                      <font>
                         <Font name="Arial Bold" size="20.0" />
                      </font>
@@ -77,7 +77,7 @@
                         <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                      </GridPane.margin>
                   </Button>
-                  <Button fx:id="botao3" mnemonicParsing="false" onAction="#clicarEm3" onKeyPressed="#pressionarTeclado" prefHeight="50.0" prefWidth="85.0" style="-fx-background-color: #232323;" text="3" textAlignment="JUSTIFY" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="3">
+                  <Button fx:id="botao3" mnemonicParsing="false" onAction="#clicarEm3" prefHeight="50.0" prefWidth="85.0" style="-fx-background-color: #232323;" text="3" textAlignment="JUSTIFY" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="3">
                      <font>
                         <Font name="Arial Bold" size="20.0" />
                      </font>
@@ -85,7 +85,7 @@
                         <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                      </GridPane.margin>
                   </Button>
-                  <Button fx:id="botaoSoma" mnemonicParsing="false" onAction="#clicarEmSoma" onKeyPressed="#pressionarTeclado" prefHeight="50.0" prefWidth="85.0" style="-fx-background-color: #404040;" text="+" textAlignment="JUSTIFY" textFill="WHITE" GridPane.columnIndex="3" GridPane.rowIndex="3">
+                  <Button fx:id="botaoSoma" mnemonicParsing="false" onAction="#clicarEmSoma" prefHeight="50.0" prefWidth="85.0" style="-fx-background-color: #404040;" text="+" textAlignment="JUSTIFY" textFill="WHITE" GridPane.columnIndex="3" GridPane.rowIndex="3">
                      <font>
                         <Font name="Arial Bold" size="20.0" />
                      </font>
@@ -93,7 +93,7 @@
                         <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                      </GridPane.margin>
                   </Button>
-                  <Button fx:id="botao4" mnemonicParsing="false" onAction="#clicarEm4" onKeyPressed="#pressionarTeclado" prefHeight="50.0" prefWidth="85.0" style="-fx-background-color: #232323;" text="4" textAlignment="JUSTIFY" textFill="WHITE" GridPane.rowIndex="2">
+                  <Button fx:id="botao4" mnemonicParsing="false" onAction="#clicarEm4" prefHeight="50.0" prefWidth="85.0" style="-fx-background-color: #232323;" text="4" textAlignment="JUSTIFY" textFill="WHITE" GridPane.rowIndex="2">
                      <font>
                         <Font name="Arial Bold" size="20.0" />
                      </font>
@@ -101,7 +101,7 @@
                         <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                      </GridPane.margin>
                   </Button>
-                  <Button fx:id="botao5" mnemonicParsing="false" onAction="#clicarEm5" onKeyPressed="#pressionarTeclado" prefHeight="50.0" prefWidth="85.0" style="-fx-background-color: #232323;" text="5" textAlignment="JUSTIFY" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                  <Button fx:id="botao5" mnemonicParsing="false" onAction="#clicarEm5" prefHeight="50.0" prefWidth="85.0" style="-fx-background-color: #232323;" text="5" textAlignment="JUSTIFY" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
                      <font>
                         <Font name="Arial Bold" size="20.0" />
                      </font>
@@ -109,7 +109,7 @@
                         <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                      </GridPane.margin>
                   </Button>
-                  <Button fx:id="botao6" mnemonicParsing="false" onAction="#clicarEm6" onKeyPressed="#pressionarTeclado" prefHeight="50.0" prefWidth="85.0" style="-fx-background-color: #232323;" text="6" textAlignment="JUSTIFY" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="2">
+                  <Button fx:id="botao6" mnemonicParsing="false" onAction="#clicarEm6" prefHeight="50.0" prefWidth="85.0" style="-fx-background-color: #232323;" text="6" textAlignment="JUSTIFY" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="2">
                      <font>
                         <Font name="Arial Bold" size="20.0" />
                      </font>
@@ -117,7 +117,7 @@
                         <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                      </GridPane.margin>
                   </Button>
-                  <Button fx:id="botaoSubtracao" mnemonicParsing="false" onAction="#clicarEmSubtracao" onKeyPressed="#pressionarTeclado" prefHeight="50.0" prefWidth="85.0" style="-fx-background-color: #404040;" text="-" textAlignment="JUSTIFY" textFill="WHITE" GridPane.columnIndex="3" GridPane.rowIndex="2">
+                  <Button fx:id="botaoSubtracao" mnemonicParsing="false" onAction="#clicarEmSubtracao" prefHeight="50.0" prefWidth="85.0" style="-fx-background-color: #404040;" text="-" textAlignment="JUSTIFY" textFill="WHITE" GridPane.columnIndex="3" GridPane.rowIndex="2">
                      <font>
                         <Font name="Arial Bold" size="20.0" />
                      </font>
@@ -125,7 +125,7 @@
                         <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                      </GridPane.margin>
                   </Button>
-                  <Button fx:id="botao7" mnemonicParsing="false" onAction="#clicarEm7" onKeyPressed="#pressionarTeclado" prefHeight="50.0" prefWidth="85.0" style="-fx-background-color: #232323;" text="7" textAlignment="JUSTIFY" textFill="WHITE" GridPane.rowIndex="1">
+                  <Button fx:id="botao7" mnemonicParsing="false" onAction="#clicarEm7" prefHeight="50.0" prefWidth="85.0" style="-fx-background-color: #232323;" text="7" textAlignment="JUSTIFY" textFill="WHITE" GridPane.rowIndex="1">
                      <font>
                         <Font name="Arial Bold" size="20.0" />
                      </font>
@@ -133,7 +133,7 @@
                         <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                      </GridPane.margin>
                   </Button>
-                  <Button fx:id="botao8" mnemonicParsing="false" onAction="#clicarEm8" onKeyPressed="#pressionarTeclado" prefHeight="50.0" prefWidth="85.0" style="-fx-background-color: #232323;" text="8" textAlignment="JUSTIFY" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                  <Button fx:id="botao8" mnemonicParsing="false" onAction="#clicarEm8" prefHeight="50.0" prefWidth="85.0" style="-fx-background-color: #232323;" text="8" textAlignment="JUSTIFY" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
                      <font>
                         <Font name="Arial Bold" size="20.0" />
                      </font>
@@ -141,7 +141,7 @@
                         <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                      </GridPane.margin>
                   </Button>
-                  <Button fx:id="botao9" mnemonicParsing="false" onAction="#clicarEm9" onKeyPressed="#pressionarTeclado" prefHeight="50.0" prefWidth="85.0" style="-fx-background-color: #232323;" text="9" textAlignment="JUSTIFY" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                  <Button fx:id="botao9" mnemonicParsing="false" onAction="#clicarEm9" prefHeight="50.0" prefWidth="85.0" style="-fx-background-color: #232323;" text="9" textAlignment="JUSTIFY" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="1">
                      <font>
                         <Font name="Arial Bold" size="20.0" />
                      </font>
@@ -149,7 +149,7 @@
                         <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                      </GridPane.margin>
                   </Button>
-                  <Button fx:id="botaoMultiplicacao" mnemonicParsing="false" onAction="#clicarEmMultiplicacao" onKeyPressed="#pressionarTeclado" prefHeight="50.0" prefWidth="85.0" style="-fx-background-color: #404040;" text="*" textAlignment="JUSTIFY" textFill="WHITE" GridPane.columnIndex="3" GridPane.rowIndex="1">
+                  <Button fx:id="botaoMultiplicacao" mnemonicParsing="false" onAction="#clicarEmMultiplicacao" prefHeight="50.0" prefWidth="85.0" style="-fx-background-color: #404040;" text="*" textAlignment="JUSTIFY" textFill="WHITE" GridPane.columnIndex="3" GridPane.rowIndex="1">
                      <font>
                         <Font name="Arial Bold" size="20.0" />
                      </font>
@@ -157,7 +157,7 @@
                         <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                      </GridPane.margin>
                   </Button>
-                  <Button fx:id="botaoCe" mnemonicParsing="false" onAction="#clicarEmCe" onKeyPressed="#pressionarTeclado" prefHeight="50.0" prefWidth="85.0" style="-fx-background-color: #404040;" text="CE" textAlignment="JUSTIFY" textFill="WHITE">
+                  <Button fx:id="botaoCe" mnemonicParsing="false" onAction="#clicarEmCe" prefHeight="50.0" prefWidth="85.0" style="-fx-background-color: #404040;" text="CE" textAlignment="JUSTIFY" textFill="WHITE">
                      <font>
                         <Font name="Arial Bold" size="20.0" />
                      </font>
@@ -165,7 +165,7 @@
                         <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                      </GridPane.margin>
                   </Button>
-                  <Button fx:id="botaoC" mnemonicParsing="false" onAction="#clicarEmC" onKeyPressed="#pressionarTeclado" prefHeight="50.0" prefWidth="85.0" style="-fx-background-color: #404040;" text="C" textAlignment="JUSTIFY" textFill="WHITE" GridPane.columnIndex="1">
+                  <Button fx:id="botaoC" mnemonicParsing="false" onAction="#clicarEmC" prefHeight="50.0" prefWidth="85.0" style="-fx-background-color: #404040;" text="C" textAlignment="JUSTIFY" textFill="WHITE" GridPane.columnIndex="1">
                      <font>
                         <Font name="Arial Bold" size="20.0" />
                      </font>
@@ -173,7 +173,7 @@
                         <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                      </GridPane.margin>
                   </Button>
-                  <Button fx:id="botaoApagar" mnemonicParsing="false" onAction="#clicarEmApagar" onKeyPressed="#pressionarTeclado" prefHeight="50.0" prefWidth="85.0" style="-fx-background-color: #404040;" text="&lt;" textAlignment="JUSTIFY" textFill="WHITE" GridPane.columnIndex="2">
+                  <Button fx:id="botaoApagar" mnemonicParsing="false" onAction="#clicarEmApagar" prefHeight="50.0" prefWidth="85.0" style="-fx-background-color: #404040;" text="&lt;" textAlignment="JUSTIFY" textFill="WHITE" GridPane.columnIndex="2">
                      <font>
                         <Font name="Arial Bold" size="20.0" />
                      </font>
@@ -181,7 +181,7 @@
                         <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                      </GridPane.margin>
                   </Button>
-                  <Button fx:id="botaoDivisao" mnemonicParsing="false" onAction="#clicarEmDivisao" onKeyPressed="#pressionarTeclado" prefHeight="50.0" prefWidth="85.0" style="-fx-background-color: #404040;" text="/" textAlignment="JUSTIFY" textFill="WHITE" GridPane.columnIndex="3">
+                  <Button fx:id="botaoDivisao" mnemonicParsing="false" onAction="#clicarEmDivisao" prefHeight="50.0" prefWidth="85.0" style="-fx-background-color: #404040;" text="/" textAlignment="JUSTIFY" textFill="WHITE" GridPane.columnIndex="3">
                      <font>
                         <Font name="Arial Bold" size="20.0" />
                      </font>
@@ -207,6 +207,11 @@
                   <Insets left="5.0" right="5.0" />
                </padding>
             </Label>
+            <Button fx:id="botaoHistoricoCalculo" layoutX="294.0" layoutY="5.0" mnemonicParsing="false" onAction="#mostrarHistorico" style="-fx-background-color: #232323;" text="H" textFill="WHITE">
+               <font>
+                  <Font name="Arial Bold" size="15.0" />
+               </font>
+            </Button>
          </children>
       </Pane>
    </children>
