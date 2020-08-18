@@ -29,10 +29,8 @@ public class HistoricoControle {
 			stage.setScene(scene);
 
 			historico.forEach((calculo) -> {
-				textAreaHistorico.appendText(calculo + "\n");
+				textAreaHistorico.appendText(calculo + "\n\n");
 			});
-
-			textAreaHistorico.appendText("_____________________");
 
 			stage.initModality(Modality.APPLICATION_MODAL);
 			stage.showAndWait();

@@ -7,7 +7,7 @@
 
 <AnchorPane style="-fx-background-color: #101010;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
 	<children>
-		<TextArea fx:id="textAreaHistorico" editable="false" prefHeight="233.0" prefWidth="360.0" wrapText="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+		<TextArea fx:id="textAreaHistorico" editable="false" prefHeight="233.0" prefWidth="360.0" style="-fx-text-fill: #101010;" wrapText="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
 			<font>
 				<Font name="Arial Bold" size="15.0" />
 			</font>
