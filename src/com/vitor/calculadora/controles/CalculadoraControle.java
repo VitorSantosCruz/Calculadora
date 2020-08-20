@@ -1,6 +1,8 @@
 package com.vitor.calculadora.controles;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 
 import javafx.event.ActionEvent;
@@ -20,6 +22,7 @@ public class CalculadoraControle {
 	private String operacaoPendente = "";
 	private boolean terminouComIgual = false;
 	private boolean reiniciarValorAtual = false;
+	private boolean houveErroDivisaoPor0 = false;
 	private ArrayList<String> historico = new ArrayList<>();
 	private Stage stage = new Stage();
 
@@ -110,14 +113,14 @@ public class CalculadoraControle {
 
 	private void mudarTamanhoLetra() {
 		int tamanho;
+		int tamanhoLabelResultado = this.labelResultado.getText().trim().length();
 
-		if (this.labelResultado.getText().trim().length() >= 10 && this.labelResultado.getText().trim().length() < 15) {
+		if (tamanhoLabelResultado >= 10 && tamanhoLabelResultado < 15) {
 			tamanho = 35;
-		} else if (this.labelResultado.getText().trim().length() >= 15
-				&& this.labelResultado.getText().trim().length() < 20) {
+		} else if (tamanhoLabelResultado >= 15 && tamanhoLabelResultado < 20) {
 			tamanho = 30;
-		} else if (this.labelResultado.getText().trim().length() >= 20) {
-			tamanho = 25;
+		} else if (tamanhoLabelResultado >= 20) {
+			tamanho = 24;
 		} else {
 			tamanho = 40;
 		}
@@ -131,9 +134,7 @@ public class CalculadoraControle {
 		if (this.temDecimais(numero)) {
 			numeroFormatado = numeroFormatado.replace(".", ",");
 		} else {
-			String valor = numeroFormatado;
-			valor = valor.substring(0, valor.indexOf("."));
-			numeroFormatado = valor;
+			numeroFormatado = numeroFormatado.substring(0, numeroFormatado.indexOf("."));
 		}
 
 		return numeroFormatado;
@@ -146,65 +147,126 @@ public class CalculadoraControle {
 		return !valor.equals("0");
 	}
 
-	private void atualizarLabelCalculo() {
-		String labelResultado = this.labelResultado.getText().trim();
-		int indiceVirgula = labelResultado.indexOf(",");
+	private void atualizarLabelCalculo(boolean igual) {
+		String valorAtual = String.valueOf(this.valorAtual).replace('.', ',');
+		String labelCalculo = this.labelCalculo.getText().trim();
 
-		if (indiceVirgula == labelResultado.length() - 1) {
-			labelResultado = labelResultado.substring(0, indiceVirgula);
+		if (!temDecimais(this.valorAtual)) {
+			valorAtual = valorAtual.substring(0, valorAtual.indexOf(","));
 		}
 
-		if (this.labelCalculo.getText().trim().isEmpty()) {
-			this.labelCalculo.setText(labelResultado + " " + this.operacaoPendente);
+		if (igual) {
+			if (!this.terminouComIgual) {
+				this.labelCalculo.setText(labelCalculo + " " + valorAtual + " =");
+			} else {
+				String resultado = String.valueOf(this.resultado).replace('.', ',');
+
+				if (!temDecimais(this.valorAtual)) {
+					resultado = resultado.substring(0, resultado.indexOf(","));
+				}
+
+				this.labelCalculo.setText(resultado + " " + this.operacaoPendente + " " + valorAtual + " =");
+			}
 		} else {
-			this.labelCalculo
-					.setText(this.labelCalculo.getText().trim() + " " + labelResultado + " " + this.operacaoPendente);
+			if (labelCalculo.isEmpty()) {
+				this.labelCalculo.setText(valorAtual + " " + this.operacaoPendente);
+			} else {
+				this.labelCalculo.setText(labelCalculo + " " + valorAtual + " " + this.operacaoPendente);
+			}
 		}
+
 	}
 
 	private void adicionarNumero(String numero) {
-		String valor = this.labelResultado.getText().trim();
+		String labelResultado = this.labelResultado.getText().trim();
 
 		if (this.terminouComIgual) {
 			clicarEmC(null);
-			valor = "0";
+			labelResultado = "0";
 		}
 
-		if (valor.length() <= 21 || this.reiniciarValorAtual) {
-			if (valor.equals("0") || this.reiniciarValorAtual) {
+		if (labelResultado.length() < 16 || this.reiniciarValorAtual || houveErroDivisaoPor0) {
+			if (labelResultado.equals("0,")) {
 				this.reiniciarValorAtual = false;
-				this.labelResultado.setText(numero);
-			} else {
-				this.labelResultado.setText(valor + numero);
+			} else if (labelResultado.equals("0") || this.reiniciarValorAtual || houveErroDivisaoPor0) {
+				this.reiniciarValorAtual = false;
+				labelResultado = "";
 			}
 
-			valor = this.labelResultado.getText().trim();
-			valor = valor.replace(".", "");
+			labelResultado = labelResultado + numero;
+			this.labelResultado.setText(labelResultado);
 
-			try {
-				this.valorAtual = Double.valueOf(valor.replace(',', '.'));
-			} catch (Exception e) {
-				clicarEmC(null);
-				this.labelResultado.setText("NAN");
-			}
-
+			this.valorAtual = Double.valueOf(labelResultado.replace(',', '.'));
 			this.mudarTamanhoLetra();
 		}
 	}
 
-	private double calculadora(String operacao) {
+	private double calculadora(String operacao) throws Exception {
+		BigDecimal resultado = new BigDecimal(this.resultado);
+		BigDecimal valorAtual = new BigDecimal(this.valorAtual);
+
 		return switch (operacao) {
 		case "+":
-			yield this.resultado + this.valorAtual;
+			yield resultado.add(valorAtual).doubleValue();
 		case "-":
-			yield this.resultado - this.valorAtual;
+			yield resultado.subtract(valorAtual).doubleValue();
 		case "*":
-			yield this.resultado * this.valorAtual;
+			yield resultado.multiply(valorAtual).doubleValue();
 		case "/":
-			yield this.resultado / this.valorAtual;
+			yield resultado.divide(valorAtual, 102400, RoundingMode.HALF_UP).doubleValue();
 		default:
 			throw new IllegalArgumentException("Operação inesperada " + operacao);
 		};
+	}
+
+	private void mostrarErroDivisaoPor0() {
+		this.clicarEmC(null);
+		this.labelResultado.setText("Não é possivel dividir por 0");
+		this.mudarTamanhoLetra();
+		this.houveErroDivisaoPor0 = true;
+	}
+
+	private void fazerOperacao(String operacao) {
+		if (terminouComIgual) {
+			this.labelCalculo.setText("");
+			this.valorAtual = this.resultado;
+			this.terminouComIgual = false;
+			this.reiniciarValorAtual = false;
+			this.mudarTamanhoLetra();
+
+		}
+
+		if (houveErroDivisaoPor0) {
+			return;
+		}
+
+		if (this.reiniciarValorAtual) {
+			String labelCalculo = this.labelCalculo.getText().trim();
+			this.operacaoPendente = operacao;
+			this.labelCalculo.setText(labelCalculo.substring(0, labelCalculo.length() - 1) + this.operacaoPendente);
+		} else {
+			if (this.labelCalculo.getText().trim().equals("")) {
+				this.resultado = this.valorAtual;
+			} else {
+				try {
+					this.resultado = this.calculadora(this.operacaoPendente);
+				} catch (Exception e) {
+					this.mostrarErroDivisaoPor0();
+					return;
+				}
+
+				String resultadoFinal = formataNumero(this.resultado);
+				this.labelResultado.setText(" " + resultadoFinal);
+			}
+
+			this.operacaoPendente = operacao;
+			this.reiniciarValorAtual = true;
+			this.atualizarLabelCalculo(false);
+
+			this.mudarTamanhoLetra();
+		}
+
+		this.valorAtual = this.resultado;
 	}
 
 	@FXML
@@ -259,19 +321,21 @@ public class CalculadoraControle {
 
 	@FXML
 	void clicarEmApagar(ActionEvent event) {
-		String valor = this.labelResultado.getText().trim();
+		String labelResultado = this.labelResultado.getText().trim();
 
-		if (terminouComIgual) {
+		if (this.terminouComIgual) {
 			this.labelCalculo.setText("");
-		} else if (valor != "0" || this.reiniciarValorAtual || this.terminouComIgual) {
-			if (valor.length() == 1 || (valor.length() == 2 && valor.indexOf("-") > -1)) {
-				this.labelResultado.setText("0");
+		} else if (!labelResultado.equals("0") || this.reiniciarValorAtual) {
+			if (labelResultado.length() == 1 || labelResultado.length() == 2 && labelResultado.startsWith("-")) {
+				labelResultado = "0";
+				this.labelResultado.setText(labelResultado);
 			} else {
-				this.labelResultado.setText(valor.substring(0, valor.length() - 1));
+				labelResultado = labelResultado.substring(0, labelResultado.length() - 1);
+				this.labelResultado.setText(labelResultado);
 			}
 
 			this.reiniciarValorAtual = false;
-			this.valorAtual = Double.valueOf(this.labelResultado.getText().replace(',', '.').trim());
+			this.valorAtual = Double.valueOf(labelResultado.replace(',', '.'));
 			this.mudarTamanhoLetra();
 		}
 	}
@@ -280,8 +344,8 @@ public class CalculadoraControle {
 	void clicarEmC(ActionEvent event) {
 		this.labelCalculo.setText("");
 		this.labelResultado.setText("0");
-		this.valorAtual = 0;
-		this.resultado = 0;
+		this.valorAtual = 0.0;
+		this.resultado = 0.0;
 		this.operacaoPendente = "";
 		this.terminouComIgual = false;
 		this.reiniciarValorAtual = false;
@@ -291,10 +355,10 @@ public class CalculadoraControle {
 	@FXML
 	void clicarEmCe(ActionEvent event) {
 		this.labelResultado.setText("0");
-		this.valorAtual = 0;
+		this.valorAtual = 0.0;
 
 		if (this.terminouComIgual) {
-			this.resultado = 0;
+			this.resultado = 0.0;
 			this.operacaoPendente = "";
 			this.terminouComIgual = false;
 			this.labelCalculo.setText("");
@@ -306,192 +370,48 @@ public class CalculadoraControle {
 
 	@FXML
 	void clicarEmDivisao(ActionEvent event) {
-		if (terminouComIgual) {
-			this.labelCalculo.setText("");
-			this.valorAtual = this.resultado;
-			this.terminouComIgual = false;
-			this.reiniciarValorAtual = false;
-			this.mudarTamanhoLetra();
-		}
-
-		if (this.reiniciarValorAtual) {
-			String labelCalculo = this.labelCalculo.getText().trim();
-			this.operacaoPendente = "/";
-			this.labelCalculo.setText(labelCalculo.substring(0, labelCalculo.length() - 1) + this.operacaoPendente);
-		} else {
-			if (this.labelCalculo.getText().trim().equals("")) {
-				this.resultado = this.valorAtual;
-			} else {
-				this.resultado = this.calculadora(this.operacaoPendente);
-			}
-
-			this.operacaoPendente = "/";
-			this.reiniciarValorAtual = true;
-			this.atualizarLabelCalculo();
-
-			if (this.temDecimais(this.resultado)) {
-				String resultado = formataNumero(this.resultado);
-				this.labelResultado.setText(" " + resultado);
-			} else {
-				String resultado = formataNumero(this.resultado);
-				this.labelResultado.setText(" " + resultado);
-			}
-
-			this.mudarTamanhoLetra();
-		}
-
-		this.valorAtual = this.resultado;
+		fazerOperacao("/");
 	}
 
 	@FXML
 	void clicarEmMultiplicacao(ActionEvent event) {
-		if (terminouComIgual) {
-			this.labelCalculo.setText("");
-			this.valorAtual = this.resultado;
-			this.terminouComIgual = false;
-			this.reiniciarValorAtual = false;
-			this.mudarTamanhoLetra();
-		}
-
-		if (this.reiniciarValorAtual) {
-			String labelCalculo = this.labelCalculo.getText().trim();
-			this.operacaoPendente = "*";
-			this.labelCalculo.setText(labelCalculo.substring(0, labelCalculo.length() - 1) + this.operacaoPendente);
-		} else {
-			if (this.labelCalculo.getText().trim().equals("")) {
-				this.resultado = this.valorAtual;
-			} else {
-				this.resultado = this.calculadora(this.operacaoPendente);
-			}
-
-			this.operacaoPendente = "*";
-			this.reiniciarValorAtual = true;
-			this.atualizarLabelCalculo();
-
-			if (this.temDecimais(this.resultado)) {
-				String resultado = formataNumero(this.resultado);
-				this.labelResultado.setText(" " + resultado);
-			} else {
-				String resultado = formataNumero(this.resultado);
-				this.labelResultado.setText(" " + resultado);
-			}
-
-			this.mudarTamanhoLetra();
-		}
-
-		this.valorAtual = this.resultado;
+		fazerOperacao("*");
 	}
 
 	@FXML
 	void clicarEmSoma(ActionEvent event) {
-		if (terminouComIgual) {
-			this.labelCalculo.setText("");
-			this.valorAtual = this.resultado;
-			this.terminouComIgual = false;
-			this.reiniciarValorAtual = false;
-			this.mudarTamanhoLetra();
-		}
-
-		if (this.reiniciarValorAtual) {
-			String labelCalculo = this.labelCalculo.getText().trim();
-			this.operacaoPendente = "+";
-			this.labelCalculo.setText(labelCalculo.substring(0, labelCalculo.length() - 1) + this.operacaoPendente);
-		} else {
-			if (this.labelCalculo.getText().trim().equals("")) {
-				this.resultado = this.valorAtual;
-			} else {
-				this.resultado = this.calculadora(this.operacaoPendente);
-			}
-
-			this.operacaoPendente = "+";
-			this.reiniciarValorAtual = true;
-			this.atualizarLabelCalculo();
-
-			if (this.temDecimais(this.resultado)) {
-				String resultado = formataNumero(this.resultado);
-				this.labelResultado.setText(" " + resultado);
-			} else {
-				String resultado = formataNumero(this.resultado);
-				this.labelResultado.setText(" " + resultado);
-			}
-
-			this.mudarTamanhoLetra();
-		}
-
-		this.valorAtual = this.resultado;
+		fazerOperacao("+");
 	}
 
 	@FXML
 	void clicarEmSubtracao(ActionEvent event) {
-		if (terminouComIgual) {
-			this.labelCalculo.setText("");
-			this.valorAtual = this.resultado;
-			this.terminouComIgual = false;
-			this.reiniciarValorAtual = false;
-			this.mudarTamanhoLetra();
-
-		}
-
-		if (this.reiniciarValorAtual) {
-			String labelCalculo = this.labelCalculo.getText().trim();
-			this.operacaoPendente = "-";
-			this.labelCalculo.setText(labelCalculo.substring(0, labelCalculo.length() - 1) + this.operacaoPendente);
-		} else {
-			if (this.labelCalculo.getText().trim().equals("")) {
-				this.resultado = this.valorAtual;
-			} else {
-				this.resultado = this.calculadora(this.operacaoPendente);
-			}
-
-			this.operacaoPendente = "-";
-			this.reiniciarValorAtual = true;
-			this.atualizarLabelCalculo();
-
-			if (this.temDecimais(this.resultado)) {
-				String resultado = formataNumero(this.resultado);
-				this.labelResultado.setText(" " + resultado);
-			} else {
-				String resultado = formataNumero(this.resultado);
-				this.labelResultado.setText(" " + resultado);
-			}
-
-			this.mudarTamanhoLetra();
-		}
-
-		this.valorAtual = this.resultado;
+		fazerOperacao("-");
 	}
 
 	@FXML
 	void clicarEmIgual(ActionEvent event) {
-		String resultado = formataNumero(this.resultado);
 		String valorAtual = formataNumero(this.valorAtual);
+
+		if (houveErroDivisaoPor0) {
+			return;
+		}
 
 		if (!this.operacaoPendente.isEmpty()) {
 			String valor;
 
-			this.resultado = this.calculadora(this.operacaoPendente);
+			this.atualizarLabelCalculo(true);
 
-			if (!terminouComIgual) {
-				this.atualizarLabelCalculo();
+			try {
+				this.resultado = this.calculadora(this.operacaoPendente);
+			} catch (Exception e) {
+				this.mostrarErroDivisaoPor0();
+				return;
 			}
 
-			if (this.temDecimais(this.resultado)) {
-				valor = formataNumero(this.resultado);
-			} else {
-				valor = formataNumero(this.resultado);
-			}
-
-			this.labelResultado.setText("" + valor);
-
-			if (!terminouComIgual) {
-				String labelCalculo = this.labelCalculo.getText().trim();
-				this.labelCalculo.setText(labelCalculo.substring(0, labelCalculo.length() - 1) + " =");
-			} else {
-				this.labelCalculo.setText(resultado + " " + this.operacaoPendente + " " + valorAtual + " =");
-			}
+			valor = formataNumero(this.resultado);
+			this.labelResultado.setText(valor);
 		} else {
 			this.resultado = this.valorAtual;
-
 			this.labelCalculo.setText(valorAtual + " =");
 		}
 
@@ -502,32 +422,43 @@ public class CalculadoraControle {
 
 	@FXML
 	void clicarEmMudaSinal(ActionEvent event) {
-		String valor = this.labelResultado.getText().trim();
+		String valor = String.valueOf(this.resultado);
+		String labelResultado = this.labelResultado.getText().trim();
 
-		if (!valor.endsWith("0")) {
-			if (valor.substring(0, 1).equals("-")) {
-				valor = valor.substring(1, valor.length());
-			} else {
-				valor = "-" + valor;
-			}
-
-			this.valorAtual *= -1;
-			this.labelResultado.setText(valor);
+		if (terminouComIgual) {
+			clicarEmC(null);
+			valorAtual = Double.valueOf(valor);
 		}
+
+		if (labelResultado.equals("0")) {
+			return;
+		}
+
+		this.valorAtual *= -1;
+		valor = this.formataNumero(this.valorAtual);
+		this.labelResultado.setText(valor);
+		this.reiniciarValorAtual = false;
+		this.mudarTamanhoLetra();
 	}
 
 	@FXML
 	void clicarEmVirgula(ActionEvent event) {
 		String valor = this.labelResultado.getText().trim();
-		boolean temVirgula = valor.indexOf(",") > -1 ? true : false;
+
+		if (houveErroDivisaoPor0) {
+			return;
+		}
+
+		if (terminouComIgual) {
+			this.clicarEmC(null);
+			valor = "0";
+		}
 
 		if (this.reiniciarValorAtual) {
 			valor = "0";
-			temVirgula = false;
-			this.reiniciarValorAtual = false;
 		}
 
-		if (!temVirgula) {
+		if (!valor.contains(",")) {
 			this.labelResultado.setText(valor + ",");
 			this.mudarTamanhoLetra();
 		}
